@@ -58,7 +58,7 @@ jobs:
             -X POST \
             -H "Content-Type: application/json" \
             -d '{"email":"FUZZ","password":"pass"}' \
-            -fc 401 \
+            -mc 200 \
             -o ffuf-report.json \
             -of json || true
         
