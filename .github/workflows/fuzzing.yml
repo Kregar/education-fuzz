@@ -35,13 +35,36 @@ jobs:
         run: |
           go install github.com/ffuf/ffuf/v2@latest
 
+#      - name: Run fuzzing
+#        run: |
+#          $HOME/go/bin/ffuf || true
+
+#      - name: Get Logs from Service
+#        run: |
+#          docker logs $(docker ps -q) > juice-logs.log
+
+#      - name: Upload results
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: security-reports-bundle
+#          path: |
+#            juice-logs.log
+
       - name: Run fuzzing
         run: |
-          $HOME/go/bin/ffuf || true
-
+          $HOME/go/bin/ffuf \
+            -w SQL-Injection \
+            -u http://localhost:3000/rest/user/login \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"email":"FUZZ","password":"pass"}' \
+            -fc 401 \
+            -o ffuf-report.json \
+            -of json || true
+        
       - name: Get Logs from Service
         run: |
-          docker logs $(docker ps -q) > juice-logs.log
+          docker logs $(docker ps -a -q --filter ancestor=bkimminich/juice-shop) > juice-logs.log
 
       - name: Upload results
         uses: actions/upload-artifact@v4
@@ -49,3 +72,4 @@ jobs:
           name: security-reports-bundle
           path: |
             juice-logs.log
+            ffuf-report.json
