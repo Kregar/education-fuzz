@@ -48,4 +48,4 @@ jobs:
         with:
           name: security-reports-bundle
           path: |
-            juice-logs.log
+            juice-logs.log #test
